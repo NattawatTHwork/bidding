@@ -17,10 +17,10 @@
                         <a class="nav-link" href="index.php">หน้าหลัก</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="product.php">จัดการสินค้า</a>
+                        <a class="nav-link" href="category.php">จัดการหมวดหมู่</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="shop.html">Shop</a>
+                        <a class="nav-link" href="product.php">จัดการสินค้า</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="contact.html">Contact</a>

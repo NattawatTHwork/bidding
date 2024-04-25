@@ -31,48 +31,33 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>001</td>
-                        <td>สินค้าที่ 1</td>
-                        <td>
-                            <button>แก้ไข</button>
-                            <button>ลบ</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>002</td>
-                        <td>สินค้าที่ 2</td>
-                        <td>
-                            <button>แก้ไข</button>
-                            <button>ลบ</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>003</td>
-                        <td>สินค้าที่ 3</td>
-                        <td>
-                            <button>แก้ไข</button>
-                            <button>ลบ</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>004</td>
-                        <td>สินค้าที่ 4</td>
-                        <td>
-                            <button>แก้ไข</button>
-                            <button>ลบ</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>005</td>
-                        <td>สินค้าที่ 5</td>
-                        <td>
-                            <button>แก้ไข</button>
-                            <button>ลบ</button>
-                        </td>
-                    </tr>
+                    <?php
+                    include_once '../connect/connect.php';
+                    $stmt = $conn->query("SELECT * FROM categories WHERE is_deleted = 0");
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    ?>
+                        <tr>
+                            <td><?= $row['category_code'] ?></td>
+                            <td><?= $row['category_name'] ?></td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        ตัวเลือก
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><button class="dropdown-item edit_data" data-id="<?= $row['category_code'] ?>" data-name="<?= $row['category_name'] ?>">แก้ไข</button></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li><button class="dropdown-item delete_data" data-id="<?= $row['category_code'] ?>">ลบ</button></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
                 </tbody>
-
             </table>
         </div>
     </div>
@@ -89,7 +74,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="formGroupExampleInput">ชื่อหมวดหมู่</label>
+                            <label for="category_name">ชื่อหมวดหมู่</label>
                             <input type="text" class="form-control" name="category_name" id="category_name" placeholder="ชื่อหมวดหมู่" required>
                         </div>
                     </div>
@@ -112,7 +97,8 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="formGroupExampleInput">ชื่อหมวดหมู่</label>
+                            <label for="category_name">ชื่อหมวดหมู่</label>
+                            <input type="hidden" name="category_code" id="category_code_edit">
                             <input type="text" class="form-control" name="category_name" id="category_name_edit" placeholder="ชื่อหมวดหมู่" required>
                         </div>
                     </div>
@@ -128,13 +114,7 @@
 
     <?php include_once 'layouts/footer.php' ?>
     <?php include_once 'layouts/script.php' ?>
-    <script>
-        $(document).ready(function() {
-            $('#datatables').DataTable({
-                "scrollX": true
-            });
-        });
-    </script>
+    <script src="js/category.js"></script>
 </body>
 
 </html>

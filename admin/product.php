@@ -27,68 +27,76 @@
                     <tr>
                         <th>รหัสสินค้า</th>
                         <th>ชื่อสินค้า</th>
-                        <th>ราคาสินค้า</th>
-                        <th>จำนวน</th>
+                        <th>หมวดหมู่</th>
+                        <th>ราคาเริ่มต้น</th>
+                        <th>ราคาปัจจุบัน</th>
+                        <th>วันที่เริ่มต้น</th>
+                        <th>วันที่สิ้นสุด</th>
                         <th>สถานะ</th>
                         <th>ตัวเลือก</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>001</td>
-                        <td>สินค้าที่ 1</td>
-                        <td>100</td>
-                        <td>10</td>
-                        <td>ปกติ</td>
-                        <td>
-                            <button>แก้ไข</button>
-                            <button>ลบ</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>002</td>
-                        <td>สินค้าที่ 2</td>
-                        <td>200</td>
-                        <td>20</td>
-                        <td>ปกติ</td>
-                        <td>
-                            <button>แก้ไข</button>
-                            <button>ลบ</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>003</td>
-                        <td>สินค้าที่ 3</td>
-                        <td>300</td>
-                        <td>30</td>
-                        <td>ปกติ</td>
-                        <td>
-                            <button>แก้ไข</button>
-                            <button>ลบ</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>004</td>
-                        <td>สินค้าที่ 4</td>
-                        <td>400</td>
-                        <td>40</td>
-                        <td>ปกติ</td>
-                        <td>
-                            <button>แก้ไข</button>
-                            <button>ลบ</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>005</td>
-                        <td>สินค้าที่ 5</td>
-                        <td>500</td>
-                        <td>50</td>
-                        <td>ปกติ</td>
-                        <td>
-                            <button>แก้ไข</button>
-                            <button>ลบ</button>
-                        </td>
-                    </tr>
+                    <?php
+                    include_once '../connect/connect.php';
+                    $stmt = $conn->query("SELECT * FROM products INNER JOIN categories ON products.category_code = categories.category_code WHERE products.is_deleted = 0");
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    ?>
+                        <tr>
+                            <td><?= $row['product_code'] ?></td>
+                            <td><?= $row['product_name'] ?></td>
+                            <td><?= $row['category_name'] ?></td>
+                            <td><?= $row['starting_price'] ?></td>
+                            <td><?= $row['current_price'] ?></td>
+                            <td><?= $row['start_datetime'] ?></td>
+                            <td><?= $row['end_datetime'] ?></td>
+                            <?php
+                            $status = $row['bid_status'];
+                            $status_text = '';
+                            $status_color = '';
+
+                            switch ($status) {
+                                case 1:
+                                    $status_text = 'ACTIVE';
+                                    $status_color = 'success';
+                                    break;
+                                case 2:
+                                    $status_text = 'CLOSED';
+                                    $status_color = 'danger';
+                                    break;
+                                case 3:
+                                    $status_text = 'SOLD';
+                                    $status_color = 'primary';
+                                    break;
+                                case 4:
+                                    $status_text = 'EXPIRED';
+                                    $status_color = 'warning';
+                                    break;
+                                default:
+                                    $status_text = 'UNKNOWN';
+                                    $status_color = 'secondary';
+                            }
+                            ?>
+
+                            <td><button type="button" class="btn btn-<?php echo $status_color; ?>"><?php echo $status_text; ?></button></td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        ตัวเลือก
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><button class="dropdown-item edit_data" data-id="<?= $row['product_code'] ?>" data-name="<?= $row['product_name'] ?>" data-category="<?= $row['category_code'] ?>" data-description="<?= $row['description'] ?>" data-starting-price="<?= $row['starting_price'] ?>" data-current-price="<?= $row['current_price'] ?>" data-start-datetime="<?= $row['start_datetime'] ?>" data-end-datetime="<?= $row['end_datetime'] ?>">แก้ไข</button></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li><button class="dropdown-item delete_data" data-id="<?= $row['product_code'] ?>">ลบ</button></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
                 </tbody>
 
             </table>
@@ -107,30 +115,38 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="formGroupExampleInput">ชื่อสินค้า</label>
+                            <label for="product_name">ชื่อสินค้า</label>
                             <input type="text" class="form-control" name="product_name" id="product_name" placeholder="ชื่อสินค้า" required>
                         </div>
                         <div class="form-group">
-                            <label for="formGroupExampleInput">หมวดหมู่</label>
+                            <label for="category_code">หมวดหมู่</label>
                             <select class="form-control" name="category_code" id="category_code" required>
-                                <option value="<?= $row['category_code'] ?>" selected><?= $row['category_name'] ?></option>
+                                <option value="">เลือกหมวดหมู่</option>
+                                <?php
+                                $stmt = $conn->query("SELECT * FROM categories WHERE is_deleted = 0");
+                                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                ?>
+                                    <option value="<?= $row['category_code'] ?>"><?= $row['category_name'] ?></option>
+                                <?php
+                                }
+                                ?>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="formGroupExampleInput">รายละเอียด</label>
-                            <textarea class="form-control" name="description" id="description" placeholder="รายละเอียด" required></textarea>
+                            <label for="description">รายละเอียด</label>
+                            <textarea class="form-control" name="description" id="description" placeholder="รายละเอียด"></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="formGroupExampleInput">ราคาเริ่มต้น</label>
-                            <input type="text" class="form-control" name="starting_price" id="facstarting_priceulty" placeholder="ราคาเริ่มต้น" required>
+                            <label for="starting_price">ราคาเริ่มต้น</label>
+                            <input type="text" class="form-control" name="starting_price" id="starting_price" placeholder="ราคาเริ่มต้น" required>
                         </div>
                         <div class="form-group">
-                            <label for="formGroupExampleInput">วันที่เริ่มต้น</label>
-                            <input type="datetime" class="form-control" name="start_datetime" id="start_datetime" placeholder="วันที่เริ่มต้น" required>
+                            <label for="start_datetime">วันที่เริ่มต้น</label>
+                            <input type="datetime-local" class="form-control" name="start_datetime" id="start_datetime" required>
                         </div>
                         <div class="form-group">
-                            <label for="formGroupExampleInput">วันที่สิ้นสุด</label>
-                            <input type="datetime" class="form-control" name="end_datetime" id="end_datetime" placeholder="วันที่สิ้นสุด" required>
+                            <label for="end_datetime">วันที่สิ้นสุด</label>
+                            <input type="datetime-local" class="form-control" name="end_datetime" id="end_datetime" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -151,31 +167,44 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <input type="hidden" name="product_code" id="product_code_edit" placeholder="ชื่อสินค้า" required>
                         <div class="form-group">
                             <label for="formGroupExampleInput">ชื่อสินค้า</label>
-                            <input type="text" class="form-control" name="product_name" id="product_name" placeholder="ชื่อสินค้า" required>
+                            <input type="text" class="form-control" name="product_name" id="product_name_edit" placeholder="ชื่อสินค้า" required>
                         </div>
                         <div class="form-group">
                             <label for="formGroupExampleInput">หมวดหมู่</label>
-                            <select class="form-control" name="category_code" id="category_code" required>
-                                <option value="<?= $row['category_code'] ?>" selected><?= $row['category_name'] ?></option>
+                            <select class="form-control" name="category_code" id="category_code_edit" required>
+                                <?php
+                                $stmt = $conn->query("SELECT * FROM categories WHERE is_deleted = 0");
+                                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                    $selected = ($row['category_code'] == $category_code) ? 'selected' : '';
+                                ?>
+                                    <option value="<?= $row['category_code'] ?>" <?= $selected ?>><?= $row['category_name'] ?></option>
+                                <?php
+                                }
+                                ?>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="formGroupExampleInput">รายละเอียด</label>
-                            <textarea class="form-control" name="description" id="description" placeholder="รายละเอียด" required></textarea>
+                            <textarea class="form-control" name="description" id="description_edit" placeholder="รายละเอียด"></textarea>
                         </div>
                         <div class="form-group">
                             <label for="formGroupExampleInput">ราคาเริ่มต้น</label>
-                            <input type="text" class="form-control" name="starting_price" id="facstarting_priceulty" placeholder="ราคาเริ่มต้น" required>
+                            <input type="text" class="form-control" name="starting_price" id="starting_price_edit" placeholder="ราคาเริ่มต้น" required>
                         </div>
+                        <!-- <div class="form-group">
+                            <label for="formGroupExampleInput">ราคาปัจจุบัน</label>
+                            <input type="text" class="form-control" name="current_price" id="current_price_edit" placeholder="ราคาปัจจุบัน">
+                        </div> -->
                         <div class="form-group">
                             <label for="formGroupExampleInput">วันที่เริ่มต้น</label>
-                            <input type="datetime" class="form-control" name="start_datetime" id="start_datetime" placeholder="วันที่เริ่มต้น" required>
+                            <input type="datetime-local" class="form-control" name="start_datetime" id="start_datetime_edit" placeholder="วันที่เริ่มต้น" required>
                         </div>
                         <div class="form-group">
                             <label for="formGroupExampleInput">วันที่สิ้นสุด</label>
-                            <input type="datetime" class="form-control" name="end_datetime" id="end_datetime" placeholder="วันที่สิ้นสุด" required>
+                            <input type="datetime-local" class="form-control" name="end_datetime" id="end_datetime_edit" placeholder="วันที่สิ้นสุด" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -190,13 +219,7 @@
 
     <?php include_once 'layouts/footer.php' ?>
     <?php include_once 'layouts/script.php' ?>
-    <script>
-        $(document).ready(function() {
-            $('#datatables').DataTable({
-                "scrollX": true
-            });
-        });
-    </script>
+    <script src="js/product.js"></script>
 </body>
 
 </html>

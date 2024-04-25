@@ -1,17 +1,14 @@
 <?php
-$db_host = 'localhost';
+$servername = "localhost"; // เชื่อมต่อกับ MySQL ที่อยู่บน localhost
+$username = "root"; // ชื่อผู้ใช้ MySQL
+$password = ""; // รหัสผ่าน MySQL
+$dbname = "bidding"; // ชื่อฐานข้อมูลที่คุณต้องการใช้
 
-$db_name = 'bidding';
-$db_user = 'root';
-$db_pass = '';
-
-// connect
 try {
-    // If you change db server system, change this too!
-    $connect = new PDO("mysql:host=$db_host; dbname=$db_name", $db_user,$db_pass );
-    $connect->exec("set names utf8mb4");
-    echo "Connected to database";
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    // เซ็ต PDO เป็นการเก็บค่า error เมื่อเกิดข้อผิดพลาด
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch(PDOException $e) {
+    echo "เกิดข้อผิดพลาดในการเชื่อมต่อ: " . $e->getMessage();
 }
-catch (PDOException $e) {
-    echo $e->getMessage();
-}
+?>

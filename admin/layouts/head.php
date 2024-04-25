@@ -20,3 +20,5 @@
 <link rel="stylesheet" type="text/css" href="../assets/css/slick-theme.css">
 
 <link rel="stylesheet" href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.css" />
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
